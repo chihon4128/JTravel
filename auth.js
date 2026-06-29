@@ -6,10 +6,10 @@
     lastPageCookieName: "bangkok_trip_last_page_v1",
     lastPageStorageKey: "bangkok_trip_last_page_v1",
     maxAgeSeconds: 60 * 60 * 24 * 30,
-    salt: "bangkok-trip-2026-v1",
-    iterations: 210000,
+    salt: "bangkok-trip-2026-v2",
+    iterations: 310000,
     keyLength: 32,
-    hashHex: "748d21906b11f83947db42760eb532d98dbdcfcf581e92095b664e086c830432"
+    hashHex: "d91ba7b0ef8e8e8c0cfc0c30523acd5571a2090de11cecdebcb3d4e8a7d7b294"
   };
 
   const scriptElement = document.currentScript || Array.from(document.scripts).find((script) => /auth\.js(?:\?|$)/.test(script.src));
