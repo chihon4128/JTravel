@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trip Menu</title>
+  <meta name="description" content="私人旅程主頁，登入後可直接進入已選旅程。">
+  <script>document.documentElement.classList.add("auth-lock");</script>
+  <script src="auth.js"></script>
+  <script>
+    if (window.TripAuth && TripAuth.requireAuth("login.html")) {
+      const rememberedPage = TripAuth.getRememberedPage();
+      const homeUrl = TripAuth.buildUrl("index.html");
+
+      if (rememberedPage && rememberedPage !== homeUrl) {
+        location.replace(rememberedPage);
+      } else {
+        document.documentElement.classList.remove("auth-lock");
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg: #f7efe5;
+      --card: rgba(255, 255, 255, 0.9);
+      --card-strong: rgba(255, 255, 255, 0.96);
+      --text: #102038;
+      --muted: #66758b;
+      --primary: #ea6a11;
+      --primary-deep: #b44d06;
+      --accent: #1c9b67;
+      --border: rgba(234, 106, 17, 0.16);
+      --shadow: 0 30px 80px rgba(16, 32, 56, 0.14);
+      --radius-xl: 34px;
+      --radius-lg: 26px;
+      --radius-md: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html.auth-lock body {
+      visibility: hidden;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 202, 140, 0.72), transparent 28%),
+        radial-gradient(circle at top right, rgba(77, 159, 178, 0.18), transparent 24%),
+        linear-gradient(180deg, #fff8ef 0%, #fffdf9 46%, #f7ecde 100%);
+    }
+
+    a,
+    button {
+      color: inherit;
+      font: inherit;
+      text-decoration: none;
+    }
+
+    .page-shell {
+      width: min(calc(100% - 28px), 1120px);
+      margin: 0 auto;
+      padding: 26px 0 42px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 30px 26px;
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(150deg, rgba(255, 254, 250, 0.96), rgba(255, 245, 229, 0.88)),
+        var(--card-strong);
+      border: 1px solid rgba(255, 219, 182, 0.9);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 260px;
+      height: 260px;
+      top: -110px;
+      right: -110px;
+      background: radial-gradient(circle, rgba(255, 183, 109, 0.34), transparent 70%);
+    }
+
+    .hero::after {
+      width: 220px;
+      height: 220px;
+      left: -80px;
+      bottom: -100px;
+      background: radial-gradient(circle, rgba(64, 141, 165, 0.16), transparent 72%);
+    }
+
+    .eyebrow {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 10px;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif TC", serif;
+      font-size: clamp(2.4rem, 8vw, 4.8rem);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
+    .lead {
+      position: relative;
+      z-index: 1;
+      max-width: 48rem;
+      margin: 16px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .button:hover,
+    .trip-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--primary), #ffab48);
+      color: #fff;
+      box-shadow: 0 16px 28px rgba(234, 106, 17, 0.24);
+    }
+
+    .button-secondary {
+      background: rgba(255, 255, 255, 0.86);
+      border-color: rgba(16, 32, 56, 0.08);
+    }
+
+    .menu-grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .trip-card {
+      display: grid;
+      gap: 18px;
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: 0 18px 40px rgba(16, 32, 56, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .trip-card:hover {
+      border-color: rgba(234, 106, 17, 0.3);
+      box-shadow: 0 24px 48px rgba(16, 32, 56, 0.1);
+    }
+
+    .card-top,
+    .card-meta,
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .card-label,
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+    }
+
+    .card-label {
+      background: rgba(234, 106, 17, 0.12);
+      color: var(--primary-deep);
+      font-weight: 700;
+    }
+
+    .pill {
+      background: rgba(16, 32, 56, 0.06);
+      color: var(--muted);
+    }
+
+    .trip-card h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 5vw, 2.6rem);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .trip-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .card-meta strong {
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    .card-meta span {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .card-foot {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .card-note {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), #ffab48);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 14px 28px rgba(234, 106, 17, 0.22);
+    }
+
+    .page-note {
+      margin: 18px 2px 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.94rem;
+    }
+
+    @media (min-width: 860px) {
+      .trip-card {
+        grid-template-columns: 1.2fr 0.8fr;
+        align-items: end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero">
+      <p class="eyebrow">Private Trip Menu</p>
+      <h1>我的旅程主頁</h1>
+      <p class="lead">
+        這頁是你的入口選單。點進旅程卡片後，之後再開 `index.html` 會直接回到那個旅程頁；只有在旅程頁按「返回首頁」才會清掉這個記憶。
+      </p>
+
+      <div class="hero-actions">
+        <a class="button button-primary" href="bangkok/20260703/index.html" data-trip-link="bangkok/20260703/index.html">直接進曼谷旅程</a>
+        <button class="button button-secondary" id="logoutButton" type="button">登出</button>
+      </div>
+    </section>
+
+    <section class="menu-grid" aria-label="旅程選單">
+      <a class="trip-card" href="bangkok/20260703/index.html" data-trip-link="bangkok/20260703/index.html">
+        <div>
+          <div class="card-top">
+            <span class="card-label">Bangkok</span>
+            <span class="pill">2026/07/03 - 2026/07/07</span>
+            <span class="pill">5 天 4 夜</span>
+          </div>
+          <h2>曼谷 Chill &amp; Tipsy Trip</h2>
+          <p>已整理每日時間軸、目前時段高亮、Grab 可複製目的地、店家候選、移動備案與行前清單，手機打開就能直接看。</p>
+        </div>
+
+        <div>
+          <div class="card-meta">
+            <strong>旅程特色</strong>
+            <span>Grab 主軸、按摩、海鮮市場、Thonglor 酒吧、Siam 採買、Baiyoke Sky</span>
+          </div>
+          <div class="card-tags" style="margin-top: 14px;">
+            <span class="pill">即時焦點</span>
+            <span class="pill">每日頁籤</span>
+            <span class="pill">可複製地點</span>
+          </div>
+          <div class="card-foot" style="margin-top: 18px;">
+            <span class="card-note">點進去後，下次開首頁會直接跳這頁</span>
+            <span class="card-cta">進入旅程</span>
+          </div>
+        </div>
+      </a>
+    </section>
+
+    <p class="page-note">如果你是用 GitHub Pages 或一般瀏覽器開啟，登入狀態與上次旅程頁通常會被記住。若是直接用手機 `file://` 本機開檔，部分瀏覽器對 cookie / localStorage 的支援可能比較嚴格。</p>
+  </main>
+
+  <script>
+    const logoutButton = document.querySelector("#logoutButton");
+    const tripLinks = Array.from(document.querySelectorAll("[data-trip-link]"));
+
+    tripLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        if (!window.TripAuth) {
+          return;
+        }
+
+        event.preventDefault();
+        const targetUrl = TripAuth.buildUrl(link.dataset.tripLink);
+        TripAuth.setRememberedPage(targetUrl);
+        location.href = targetUrl;
+      });
+    });
+
+    if (logoutButton) {
+      logoutButton.addEventListener("click", () => {
+        if (window.TripAuth) {
+          TripAuth.logout("login.html");
+        }
+      });
+    }
+
+    document.documentElement.classList.remove("auth-lock");
+  </script>
+</body>
+</html>

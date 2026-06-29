@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trip Login</title>
+  <meta name="description" content="私人旅程頁登入入口">
+  <style>
+    :root {
+      --bg: #f7efe5;
+      --card: rgba(255, 255, 255, 0.92);
+      --primary: #ea6a11;
+      --primary-deep: #b44d06;
+      --text: #102038;
+      --muted: #66758b;
+      --border: rgba(234, 106, 17, 0.18);
+      --shadow: 0 24px 60px rgba(16, 32, 56, 0.12);
+      --radius: 28px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 198, 128, 0.65), transparent 28%),
+        radial-gradient(circle at top right, rgba(70, 167, 184, 0.18), transparent 26%),
+        linear-gradient(180deg, #fff7ec 0%, #fffdf9 50%, #f8eee0 100%);
+    }
+
+    .login-shell {
+      width: min(100%, 420px);
+      padding: 28px;
+      border-radius: 32px;
+      background: var(--card);
+      border: 1px solid rgba(255, 221, 187, 0.88);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--primary-deep);
+    }
+
+    h1 {
+      margin: 12px 0 10px;
+      font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif TC", serif;
+      font-size: 2.2rem;
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+
+    .lead {
+      margin: 0 0 22px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(16, 32, 56, 0.12);
+      background: rgba(255, 255, 255, 0.96);
+      font: inherit;
+    }
+
+    button {
+      min-height: 52px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), #ffab48);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(234, 106, 17, 0.24);
+    }
+
+    .status {
+      min-height: 24px;
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .status.is-error {
+      color: #b42318;
+    }
+
+    .note {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+  </style>
+  <script src="auth.js"></script>
+</head>
+<body>
+  <main class="login-shell">
+    <p class="eyebrow">Private Trip Access</p>
+    <h1>登入旅程頁</h1>
+    <p class="lead">輸入密碼後會記住登入狀態，之後再開主頁或旅程頁就不需要重登。</p>
+
+    <form id="loginForm">
+      <label for="passwordInput">
+        密碼
+        <input id="passwordInput" name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <button type="submit" id="submitButton">進入</button>
+      <p class="status" id="statusText"></p>
+    </form>
+
+    <p class="note">這是公開靜態頁的前端登入閘門，不是伺服器等級保護；主要用途是避免公開頁面被直接打開。</p>
+  </main>
+
+  <script>
+    if (window.TripAuth && TripAuth.hasPersistentAuth()) {
+      TripAuth.redirectAfterLogin("index.html");
+    }
+
+    const loginForm = document.querySelector("#loginForm");
+    const passwordInput = document.querySelector("#passwordInput");
+    const submitButton = document.querySelector("#submitButton");
+    const statusText = document.querySelector("#statusText");
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const password = passwordInput.value;
+
+      statusText.classList.remove("is-error");
+      statusText.textContent = "驗證中...";
+      submitButton.disabled = true;
+
+      try {
+        const passed = await TripAuth.verifyPassword(password);
+
+        if (!passed) {
+          statusText.classList.add("is-error");
+          statusText.textContent = "密碼錯誤，請再試一次。";
+          submitButton.disabled = false;
+          return;
+        }
+
+        TripAuth.setPersistentAuth();
+        statusText.textContent = "登入成功，正在進入主頁...";
+        TripAuth.redirectAfterLogin("index.html");
+      } catch (error) {
+        statusText.classList.add("is-error");
+        statusText.textContent = "目前裝置無法完成驗證，請改用支援較新的瀏覽器。";
+        submitButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
