@@ -60,6 +60,7 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
   color: var(--secondary);
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top left, rgba(255, 211, 145, 0.7), transparent 28%),
     radial-gradient(circle at top right, rgba(84, 184, 196, 0.18), transparent 26%),
@@ -93,20 +94,6 @@ a {
 main {
   display: flex;
   flex-direction: column;
-}
-
-.hero,
-.summary-card,
-.callout,
-.focus-card,
-.playbook-card,
-.day-panel,
-.backup-card,
-.checklist-card,
-.mini-card,
-.side-card,
-.playbook-item {
-  backdrop-filter: blur(20px);
 }
 
 .hero {
@@ -657,7 +644,6 @@ main {
   border-radius: 24px;
   background: rgba(255, 251, 246, 0.86);
   border: 1px solid rgba(255, 226, 197, 0.92);
-  backdrop-filter: blur(18px);
   box-shadow: 0 12px 24px rgba(25, 39, 66, 0.08);
 }
 
@@ -743,6 +729,139 @@ main {
   display: none;
 }
 
+.day-quickline {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 225, 194, 0.92);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 243, 0.96), rgba(255, 255, 255, 0.98));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.day-quickline-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.day-quickline-head strong {
+  font-size: 1rem;
+  color: var(--secondary);
+}
+
+.day-quickline-head span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.day-quickline-track {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 4px 8px;
+  scrollbar-width: none;
+}
+
+.day-quickline-track::-webkit-scrollbar {
+  display: none;
+}
+
+.day-quickline-track::before {
+  content: "";
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 27px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(249, 115, 22, 0.28), rgba(45, 114, 217, 0.2));
+  pointer-events: none;
+}
+
+.quickline-item {
+  position: relative;
+  flex: 0 0 clamp(152px, 42vw, 220px);
+  display: grid;
+  gap: 8px;
+  min-height: 96px;
+  padding: 36px 14px 14px 16px;
+  border: 1px solid rgba(255, 219, 182, 0.94);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--secondary);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  z-index: 1;
+}
+
+.quickline-item::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 16px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 4px solid rgba(249, 115, 22, 0.18);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9);
+}
+
+.quickline-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+.quickline-item.is-selected {
+  border-color: rgba(249, 115, 22, 0.38);
+  background: linear-gradient(180deg, rgba(255, 242, 225, 0.98), rgba(255, 255, 255, 0.98));
+  box-shadow: 0 12px 24px rgba(249, 115, 22, 0.12);
+}
+
+.quickline-item.is-selected::before {
+  background: linear-gradient(180deg, #f97316, #ffbd73);
+  border-color: rgba(255, 237, 213, 0.96);
+}
+
+.quickline-item.is-current {
+  border-color: rgba(28, 155, 103, 0.34);
+  background: linear-gradient(180deg, rgba(235, 252, 244, 0.98), rgba(255, 255, 255, 0.98));
+  box-shadow: 0 12px 24px rgba(28, 155, 103, 0.12);
+}
+
+.quickline-item.is-current::before {
+  background: linear-gradient(180deg, #16a34a, #8ce3b8);
+  border-color: rgba(223, 249, 239, 0.96);
+}
+
+.quickline-time {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--primary-deep);
+}
+
+.quickline-item.is-current .quickline-time {
+  color: #157650;
+}
+
+.quickline-label {
+  display: -webkit-box;
+  overflow: hidden;
+  font-weight: 700;
+  line-height: 1.45;
+  color: rgba(15, 23, 42, 0.84);
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
 .day-overview {
   display: grid;
   gap: 14px;
@@ -793,7 +912,7 @@ main {
   background: var(--card-strong);
   border: 1px solid rgba(255, 228, 201, 0.92);
   box-shadow: var(--shadow-card);
-  scroll-margin-top: 108px;
+  scroll-margin-top: 158px;
 }
 
 .timeline-card::before {
@@ -826,6 +945,13 @@ main {
 .timeline-card.is-current .time-badge {
   background: rgba(28, 155, 103, 0.14);
   color: #157650;
+}
+
+.timeline-card.is-jump-target {
+  border-color: rgba(249, 115, 22, 0.4);
+  box-shadow:
+    0 0 0 4px rgba(249, 115, 22, 0.12),
+    0 14px 32px rgba(249, 115, 22, 0.12);
 }
 
 .timeline-now-chip {
@@ -899,6 +1025,7 @@ main {
 .route-grid div {
   display: grid;
   gap: 4px;
+  min-width: 0;
 }
 
 .route-grid span {
@@ -1029,6 +1156,7 @@ main {
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 229, 204, 0.9);
+  min-width: 0;
 }
 
 .next-step-option span {
@@ -1195,25 +1323,32 @@ main {
   z-index: 20;
   transform: translateX(-50%);
   display: inline-flex;
-  gap: 8px;
+  gap: 6px;
   width: min(calc(100% - 20px), 440px);
-  padding: 10px;
+  padding: 8px;
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.9);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.24);
-  backdrop-filter: blur(18px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.bottom-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .bottom-nav a {
-  flex: 1 1 0;
+  flex: 0 0 auto;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   min-height: 44px;
-  padding: 0 8px;
+  min-width: 58px;
+  padding: 0 10px;
   border-radius: 999px;
   color: rgba(255, 255, 255, 0.72);
-  font-size: 0.92rem;
+  font-size: 0.84rem;
+  white-space: nowrap;
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
@@ -1266,6 +1401,27 @@ main {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .day-quickline {
+    padding: 14px;
+  }
+
+  .quickline-item {
+    flex-basis: 72vw;
+    min-height: 90px;
+  }
+
+  .bottom-nav {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .bottom-nav a {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 8px;
+    font-size: 0.92rem;
   }
 
   .route-grid {
@@ -3161,6 +3317,14 @@ function activateDay(dayId) {
 
   updateFocusCard(nextPanel);
   updateCollapseButton(nextPanel);
+
+  if (!nextPanel.querySelector(".quickline-item.is-selected")) {
+    const firstCard = nextPanel.querySelector(".timeline-card");
+
+    if (firstCard) {
+      markQuicklineSelected(firstCard);
+    }
+  }
 }
 
 function getTripStatus(dateKey, dayKey) {
@@ -3227,6 +3391,20 @@ function getDateSerial(dateKey) {
 
 function getMomentValue(dateKey, minutes) {
   return getDateSerial(dateKey) * 1440 + minutes;
+}
+
+function ensureTimelineCardIds() {
+  dayPanels.forEach((panel) => {
+    const cards = Array.from(panel.querySelectorAll(".timeline-card"));
+
+    cards.forEach((card, index) => {
+      if (!card.id) {
+        card.id = `${panel.id}-timeline-${index + 1}`;
+      }
+
+      card.dataset.timelineIndex = String(index + 1);
+    });
+  });
 }
 
 function parseTimeRange(label) {
@@ -3613,6 +3791,183 @@ function injectNextStepBanners() {
   });
 }
 
+function getQuicklineButtonForCard(card) {
+  const panel = card ? card.closest(".day-panel") : null;
+
+  if (!panel || !card.id) {
+    return null;
+  }
+
+  return Array.from(panel.querySelectorAll(".quickline-item"))
+    .find((button) => button.dataset.targetCard === card.id) || null;
+}
+
+function clearQuicklineCurrentState() {
+  document.querySelectorAll(".quickline-item.is-current").forEach((button) => {
+    button.classList.remove("is-current");
+  });
+}
+
+function clearQuicklineSelectedState() {
+  document.querySelectorAll(".quickline-item.is-selected").forEach((button) => {
+    button.classList.remove("is-selected");
+  });
+}
+
+function markQuicklineCurrent(card) {
+  const button = getQuicklineButtonForCard(card);
+
+  if (!button) {
+    return;
+  }
+
+  button.classList.add("is-current");
+  button.scrollIntoView({
+    behavior: "smooth",
+    block: "nearest",
+    inline: "center"
+  });
+}
+
+function markQuicklineSelected(card) {
+  const button = getQuicklineButtonForCard(card);
+
+  clearQuicklineSelectedState();
+
+  if (!button) {
+    return;
+  }
+
+  button.classList.add("is-selected");
+  button.scrollIntoView({
+    behavior: "smooth",
+    block: "nearest",
+    inline: "center"
+  });
+}
+
+function focusTimelineCard(card, options = {}) {
+  if (!card) {
+    return;
+  }
+
+  const {
+    behavior = "smooth",
+    spotlight = true,
+    expandManual = true,
+    selectQuickline = true
+  } = options;
+
+  const panel = card.closest(".day-panel");
+
+  if (panel) {
+    activateDay(panel.id);
+
+    if (panel.classList.contains("is-collapsed")) {
+      panel.classList.remove("is-collapsed");
+      updateCollapseButton(panel);
+    }
+  }
+
+  if (expandManual) {
+    const inlineManual = card.querySelector(".inline-manual");
+
+    if (inlineManual) {
+      inlineManual.open = true;
+    }
+  }
+
+  if (selectQuickline) {
+    markQuicklineSelected(card);
+  }
+
+  if (spotlight) {
+    card.classList.add("is-jump-target");
+    clearTimeout(card.jumpTimer);
+    card.jumpTimer = window.setTimeout(() => {
+      card.classList.remove("is-jump-target");
+    }, 1800);
+  }
+
+  requestAnimationFrame(() => {
+    card.scrollIntoView({
+      behavior,
+      block: "center"
+    });
+
+    card.setAttribute("tabindex", "-1");
+    card.focus({ preventScroll: true });
+  });
+}
+
+function buildDayQuicklines() {
+  dayPanels.forEach((panel) => {
+    const dayBody = panel.querySelector(".day-body");
+    const timeline = panel.querySelector(".timeline");
+    const cards = Array.from(panel.querySelectorAll(".timeline-card"));
+
+    if (!dayBody || !timeline || cards.length === 0) {
+      return;
+    }
+
+    const existing = dayBody.querySelector(".day-quickline");
+
+    if (existing) {
+      existing.remove();
+    }
+
+    const quickline = document.createElement("section");
+    quickline.className = "day-quickline";
+    quickline.setAttribute("aria-label", "當日時間線");
+
+    const head = document.createElement("div");
+    head.className = "day-quickline-head";
+
+    const title = document.createElement("strong");
+    title.textContent = "時間線";
+    head.appendChild(title);
+
+    const tip = document.createElement("span");
+    tip.textContent = "點任一時段就直接跳到下面那段行程";
+    head.appendChild(tip);
+
+    quickline.appendChild(head);
+
+    const track = document.createElement("div");
+    track.className = "day-quickline-track";
+
+    cards.forEach((card) => {
+      const time = card.querySelector(".time-badge") ? card.querySelector(".time-badge").textContent.trim() : "";
+      const label = card.querySelector("h4") ? card.querySelector("h4").textContent.trim() : "行程";
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "quickline-item";
+      button.dataset.targetCard = card.id;
+      button.setAttribute("aria-controls", card.id);
+
+      const timeNode = document.createElement("span");
+      timeNode.className = "quickline-time";
+      timeNode.textContent = time || "未定";
+      button.appendChild(timeNode);
+
+      const labelNode = document.createElement("span");
+      labelNode.className = "quickline-label";
+      labelNode.textContent = label;
+      button.appendChild(labelNode);
+
+      button.addEventListener("click", () => {
+        focusTimelineCard(card);
+      });
+
+      track.appendChild(button);
+    });
+
+    quickline.appendChild(track);
+    dayBody.insertBefore(quickline, timeline);
+  });
+}
+
 function buildScheduleTimelineRanges() {
   const ranges = [];
 
@@ -3673,6 +4028,8 @@ function buildScheduleTimelineRanges() {
 }
 
 function clearCurrentTimelineState() {
+  clearQuicklineCurrentState();
+
   document.querySelectorAll(".timeline-card.is-current").forEach((card) => {
     card.classList.remove("is-current");
     card.removeAttribute("tabindex");
@@ -3714,12 +4071,21 @@ function focusCurrentTimelineItem() {
       updateLiveStatus("旅程已結束，已停在最後一天");
     }
 
+    const fallbackPanel = document.getElementById(fallbackDayId);
+    const firstCard = fallbackPanel ? fallbackPanel.querySelector(".timeline-card") : null;
+
+    if (firstCard) {
+      markQuicklineSelected(firstCard);
+    }
+
     return;
   }
 
   activateDay(currentMatch.panel.id);
   currentMatch.card.classList.add("is-current");
   currentMatch.card.setAttribute("tabindex", "-1");
+  markQuicklineCurrent(currentMatch.card);
+  markQuicklineSelected(currentMatch.card);
 
   const activeTab = dayTabs.find((tab) => tab.dataset.tabTarget === currentMatch.panel.id);
   if (activeTab) {
@@ -3749,13 +4115,11 @@ function focusCurrentTimelineItem() {
   const dayTitle = currentMatch.panel.querySelector(".day-kicker") ? currentMatch.panel.querySelector(".day-kicker").textContent.split("｜")[0].trim() : "";
   updateLiveStatus(`目前進行：${dayTitle} · ${cardTitle}`);
 
-  requestAnimationFrame(() => {
-    currentMatch.card.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
-
-    currentMatch.card.focus({ preventScroll: true });
+  focusTimelineCard(currentMatch.card, {
+    behavior: "smooth",
+    spotlight: false,
+    expandManual: true,
+    selectQuickline: true
   });
 }
 
@@ -4000,6 +4364,8 @@ if ("IntersectionObserver" in window) {
 
 injectInlineMobilityGuides();
 injectNextStepBanners();
+ensureTimelineCardIds();
+buildDayQuicklines();
 bindCopyButtons();
 focusCurrentTimelineItem();
 loadChecklistState();
